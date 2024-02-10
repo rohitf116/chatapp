@@ -1,18 +1,19 @@
-import { config } from "./config";
-import mongoose from "mongoose";
-
+import Logger from 'bunyan';
+import { config } from './config';
+import mongoose from 'mongoose';
+const log: Logger = config.createLoger('databaseSetupt');
 const MONGO_URI = config.DATABASE_URL;
 export default () => {
   const connect = () => {
     mongoose
       .connect(MONGO_URI!)
-      .then(() => console.log("connected to mongodb"))
+      .then(() => log.info('connected to mongodb'))
       .catch((err) => {
-        console.log(err);
+        log.error(err);
 
         return process.exit(1);
       });
   };
   connect();
-  mongoose.connection.on("disconnect", connect);
+  mongoose.connection.on('disconnect', connect);
 };

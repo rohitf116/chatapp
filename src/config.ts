@@ -1,4 +1,5 @@
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
+import bunyan from 'bunyan';
 dotenv.config({});
 
 class Config {
@@ -10,7 +11,6 @@ class Config {
   public CLIENT_URL: string | undefined;
   public REDIS_HOST: string | undefined;
 
-  private readonly DEFAULT_DATABASE = "";
   constructor() {
     this.DATABASE_URL = process.env.DATABASE_URL || undefined;
     this.JWT_TOKEN = process.env.JWT_TOKEN || undefined;
@@ -19,6 +19,9 @@ class Config {
     this.SECRET_KET_TWO = process.env.SECRET_KET_TWO || undefined;
     this.CLIENT_URL = process.env.CLIENT_URL || undefined;
     this.REDIS_HOST = process.env.REDIS_HOST || undefined;
+  }
+  public createLoger(name: string): bunyan {
+    return bunyan.createLogger({ name, level: 'debug' });
   }
 
   public validateConfig(): void {
