@@ -8,6 +8,7 @@ class Config {
   public SECRET_KET_ONE: string | undefined;
   public SECRET_KET_TWO: string | undefined;
   public CLIENT_URL: string | undefined;
+  public REDIS_HOST: string | undefined;
 
   private readonly DEFAULT_DATABASE = "";
   constructor() {
@@ -17,6 +18,15 @@ class Config {
     this.SECRET_KET_ONE = process.env.SECRET_KET_ONE || undefined;
     this.SECRET_KET_TWO = process.env.SECRET_KET_TWO || undefined;
     this.CLIENT_URL = process.env.CLIENT_URL || undefined;
+    this.REDIS_HOST = process.env.REDIS_HOST || undefined;
+  }
+
+  public validateConfig(): void {
+    for (const [key, val] of Object.entries(this)) {
+      if (val === undefined) {
+        throw new Error(`Configuration ${key} is undefined`);
+      }
+    }
   }
 }
 
