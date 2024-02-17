@@ -92,7 +92,13 @@ export class ChatServer {
         methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS']
       }
     });
-    const pubClient = createClient({ url: config.REDIS_HOST });
+    const pubClient = createClient({
+      password: config.REDIS_PASSWORD,
+      socket: {
+        host: config.REDIS_HOST,
+        port: Number(config.REDIS_PORT)
+      }
+    });
     const subClient = pubClient.duplicate();
     await Promise.all([pubClient.connect(), subClient.connect()]);
     io.adapter(createAdapter(pubClient, subClient));
