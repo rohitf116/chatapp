@@ -16,8 +16,10 @@ import JWT from 'jsonwebtoken';
 // import { authQueue } from '@service/queues/auth.queue';
 // import { userQueue } from '@service/queues/user.queue';
 import { config } from '@root/config';
+import { IUserDocument } from '@user/interfaces/user.interface';
+import { UserCache } from '@service/redis/user.cache';
 
-// const userCache: UserCache = new UserCache();
+const userCache: UserCache = new UserCache();
 
 export class SignUp {
   @joiValidation(signupSchema)
@@ -45,14 +47,14 @@ export class SignUp {
     }
 
     // Add to redis cache
-    // const userDataForCache: IUserDocument = SignUp.prototype.userData(authData, userObjectId);
-    // userDataForCache.profilePicture = `https://res.cloudinary.com/dyamr9ym3/image/upload/v${result.version}/${userObjectId}`;
-    // await userCache.saveUserToCache(`${userObjectId}`, uId, userDataForCache);
+    const userDataForCache: IUserDocument = SignUp.prototype.userData(authData, userObjectId);
+    userDataForCache.profilePicture = `https://res.cloudinary.com/dyamr9ym3/image/upload/v${result.version}/${userObjectId}`;
+    await userCache.saveUserToCache(`${userObjectId}`, uId, userDataForCache);
 
-    // // Add to database
-    // omit(userDataForCache, ['uId', 'username', 'email', 'avatarColor', 'password']);
-    // authQueue.addAuthUserJob('addAuthUserToDB', { value: userDataForCache });
-    // userQueue.addUserJob('addUserToDB', { value: userDataForCache });
+    // Add to database
+    omit(userDataForCache, ['uId', 'username', 'email', 'avatarColor', 'password']);
+    authQueue.addAuthUserJob('addAuthUserToDB', { value: userDataForCache });
+    userQueue.addUserJob('addUserToDB', { value: userDataForCache });
 
     const userJwt: string = SignUp.prototype.signToken(authData, userObjectId);
     req.session = { jwt: userJwt };

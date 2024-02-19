@@ -30,3 +30,12 @@ export class Helpers {
     }
   }
 }
+
+export class ServerError extends CustomError {
+  statusCode = HTTP_STATUS.SERVICE_UNAVAILABLE;
+  status = 'error';
+
+  constructor(message: string) {
+    super(message);
+  }
+}
