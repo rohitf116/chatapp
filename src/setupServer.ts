@@ -6,6 +6,8 @@ import hpp from 'hpp';
 import cookieSession from 'cookie-session';
 import compression from 'compression';
 import HTTP_STATUS from 'http-status-codes';
+import multer from 'multer';
+import morgan from 'morgan';
 import { Server } from 'socket.io';
 import { createClient } from 'redis';
 import { createAdapter } from '@socket.io/redis-adapter';
@@ -43,6 +45,7 @@ export class ChatServer {
     );
     app.use(hpp());
     app.use(helmet());
+    app.use(morgan('dev'));
     app.use(
       cors({
         origin: '*',
@@ -54,6 +57,10 @@ export class ChatServer {
   private standardMiddleware(app: Application) {
     app.use(compression());
     app.use(json({ limit: '30mb' }));
+    app.use(multer().any());
+    // app.get('/', (req, res) => {
+    //   res.status(400).send('HIi');
+    // });
     app.use(urlencoded({ extended: true, limit: '30mb' }));
   }
   private routeMiddleware(app: Application) {
